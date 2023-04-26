@@ -12,6 +12,7 @@ export async function POST(req: NextRequest) {
     const custId = await sql.unsafe(`select id from customers where name = '${customerName}'`);
     let dt = dateTime.create();
     let formatted = dt.format('Y-m-d H:M:S');
-    const order = await sql.unsafe(`insert into orders (bookId,custId,orderedAt,quantity) values (${bookId},${custId[0].id},'${formatted}',1)`)
-    return NextResponse.json({message: "Order Successfully Created"},{status:200})
+    await sql.unsafe(`insert into orders (bookId,custId,orderedAt,quantity) values (${bookId},${custId[0].id},'${formatted}',1)`);
+    const orderId = await sql.unsafe(`select id from orders where bookId = ${bookId} and custId = ${custId[0].id} and orderedat = '${formatted}'`)
+    return NextResponse.json({message: "Order Successfully Created",orderId: orderId[0].id},{status:200})
 }

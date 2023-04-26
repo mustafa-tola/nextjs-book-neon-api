@@ -1,5 +1,5 @@
 export type BookRequest = {
-    bookId: string;
+    bookId: number;
     customerName: string;
     clientName: string;
     clientEmail: string;
