@@ -16,3 +16,14 @@ export async function POST(req: NextRequest) {
     const orderId = await sql.unsafe(`select id from orders where bookId = ${bookId} and custId = ${custId[0].id} and orderedat = '${formatted}'`)
     return NextResponse.json({message: "Order Successfully Created",orderId: orderId[0].id},{status:200})
 }
+
+export async function GET(req: NextRequest) {
+    let query = `select * from orders`;
+    const orders = await sql.unsafe(query);
+    if (orders.length <= 0) {
+        return NextResponse.json({ message: `No orders available` })
+    }
+    else {
+        return NextResponse.json(orders);
+    }
+}
