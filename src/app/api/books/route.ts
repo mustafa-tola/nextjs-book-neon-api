@@ -1,12 +1,14 @@
 import sql from "@/app/dbConn";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest):Promise<NextResponse> {
     let query = "select * from books";
     if (req.nextUrl.searchParams.has("bookType")) {
-        const type = req.nextUrl.searchParams.get("bookType") as string;
-        const upperedType = (type.charAt(0)).toUpperCase() + (type.slice(1));
-        query += ` where type = '${upperedType}'`
+        query += ` where type = '`
+        const type = (req.nextUrl.searchParams.get("bookType") as string).split(" ");
+        type.map((word) => query += word.charAt(0).toUpperCase() + word.slice(1) + " ");
+        query = query.slice(0,query.length - 1) + "'"
+        console.log(query);
     }
     if (req.nextUrl.searchParams.has("bookLimit")) {
         const limit = parseInt(req.nextUrl.searchParams.get("bookLimit") as string);
@@ -18,5 +20,10 @@ export async function GET(req: NextRequest) {
         }
     }
     const books = await sql.unsafe(query);
-    return NextResponse.json(books);
+    if (books.length <= 0) {
+        return NextResponse.json({ message: `No books available` })
+    }
+    else {
+        return NextResponse.json(books);
+    }
 }
