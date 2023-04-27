@@ -5,6 +5,9 @@ import * as dateTime from "node-datetime";
 
 export async function POST(req: NextRequest) {
     const { bookId, customerName }: Partial<BookRequest> = await req.json();
+    if(bookId == undefined) {
+        return NextResponse.json({message: "Book id should be given"},{status: 400})
+    }
     const book = await sql.unsafe(`select * from books where id = ${bookId}`);
     if (book.length <= 0) {
         return NextResponse.json({ message: `No book with id ${bookId} available` }, { status: 400 });
