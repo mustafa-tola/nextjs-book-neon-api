@@ -1,13 +1,12 @@
 import sql from "@/app/dbConn";
 import { NextRequest, NextResponse } from "next/server";
+import { capitalization } from "../../../../modules/capitalization";
 
 export async function GET(req: NextRequest):Promise<NextResponse> {
     let query = "select * from books";
     if (req.nextUrl.searchParams.has("bookType")) {
         query += ` where type = '`
-        const type = (req.nextUrl.searchParams.get("bookType") as string).split(" ");
-        type.map((word) => query += word.charAt(0).toUpperCase() + word.slice(1) + " ");
-        query = query.slice(0,query.length - 1) + "'"
+        query += capitalization(req.nextUrl.searchParams.get("bookType") as string);
         console.log(query);
     }
     if (req.nextUrl.searchParams.has("bookLimit")) {
